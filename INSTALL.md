@@ -1,70 +1,64 @@
-# Installing from Source
+> 🌐 本文档由 [rust-lang/rust](https://github.com/rust-lang/rust) 翻译,英文原版见原项目。
 
-**Note: This document describes _building_ Rust _from source_.
-This is _not recommended_ if you don't know what you're doing.
-If you just want to install Rust, check out the [README.md](README.md) instead.**
+# 从源码安装
 
-The Rust build system uses a Python script called `x.py` to build the compiler,
-which manages the bootstrapping process. It lives at the root of the project.
-It also uses a file named `bootstrap.toml` to determine various configuration
-settings for the build. You can see a full list of options in
-`bootstrap.example.toml`.
+**注意:本文档介绍的是如何*从源码*构建 Rust。如果你不清楚自己在做什么,
+*不建议*采用这种方式。如果你只是想安装 Rust,请直接查看 [README.md](README.md)。**
 
-The `x.py` command can be run directly on most Unix systems in the following
-format:
+Rust 的构建系统使用一个名为 `x.py` 的 Python 脚本来构建编译器,由它负责管理
+引导构建(bootstrap)流程。该脚本位于项目根目录。构建配置由名为 `bootstrap.toml`
+的文件决定,完整可选项列表见 `bootstrap.example.toml`。
+
+在大多数 Unix 系统上,`x.py` 命令可以按以下格式直接运行:
 
 ```sh
-./x.py <subcommand> [flags]
+./x.py <子命令> [flags]
 ```
 
-This is how the documentation and examples assume you are running `x.py`.
-See the [rustc dev guide][rustcguidebuild] if this does not work on your
-platform.
+本文档和示例均假设你以这种方式运行 `x.py`。如果你的平台上这种方式不可用,
+请参阅 [rustc 开发指南][rustcguidebuild]。
 
-More information about `x.py` can be found by running it with the `--help` flag
-or reading the [rustc dev guide][rustcguidebuild].
+运行 `x.py --help` 或阅读 [rustc 开发指南][rustcguidebuild]可以了解更多关于
+`x.py` 的信息。
 
 [gettingstarted]: https://rustc-dev-guide.rust-lang.org/getting-started.html
 [rustcguidebuild]: https://rustc-dev-guide.rust-lang.org/building/how-to-build-and-run.html#what-is-xpy
 
-## Dependencies
+## 依赖项
 
-Make sure you have installed the dependencies:
+请确保已安装以下依赖:
 
-* `python` 3 or 2.7
+* `python` 3 或 2.7
 * `git`
-* A C compiler (when building for the host, `cc` is enough; cross-compiling may
-  need additional compilers)
-* `curl` (not needed on Windows)
-* `pkg-config` if you are compiling on Linux and targeting Linux
-* `libiconv` (already included with glibc on Debian-based distros)
+* 一个 C 编译器(构建宿主机目标时 `cc` 即可;交叉编译可能需要额外的编译器)
+* `curl`(Windows 上不需要)
+* 在 Linux 上编译且目标为 Linux 时需要 `pkg-config`
+* `libiconv`(基于 Debian 的发行版中已随 glibc 附带)
 
-To build Cargo, you'll also need OpenSSL (`libssl-dev` or `openssl-devel` on
-most Unix distros).
+要构建 Cargo,还需要 OpenSSL(大多数 Unix 发行版上为 `libssl-dev` 或
+`openssl-devel`)。
 
-If building LLVM from source, you'll need additional tools:
+如果从源码构建 LLVM,还需要以下工具:
 
-* `g++`, `clang++`, or MSVC with versions listed on
-  [LLVM's documentation](https://llvm.org/docs/GettingStarted.html#host-c-toolchain-both-compiler-and-standard-library)
-* `ninja`, or GNU `make` 3.81 or later (Ninja is recommended, especially on
-  Windows)
-* `cmake` version listed on [LLVM's documentation](https://llvm.org/docs/GettingStarted.html#software)
-* `libstdc++-static` may be required on some Linux distributions such as Fedora
-  and Ubuntu
+* `g++`、`clang++` 或 MSVC,版本要求见
+  [LLVM 官方文档](https://llvm.org/docs/GettingStarted.html#host-c-toolchain-both-compiler-and-standard-library)
+* `ninja`,或 GNU `make` 3.81 及以上版本(推荐 Ninja,Windows 上尤其如此)
+* `cmake`,版本要求见 [LLVM 官方文档](https://llvm.org/docs/GettingStarted.html#software)
+* 某些 Linux 发行版(如 Fedora 和 Ubuntu)可能需要 `libstdc++-static`
 
-On tier 1 or tier 2 with host tools platforms, you can also choose to download
-LLVM by setting `llvm.download-ci-llvm = true`.
-Otherwise, you'll need LLVM installed and `llvm-config` in your path.
-See [the rustc-dev-guide for more info][sysllvm].
+在 tier 1 或 tier 2 且带 host tools 的平台上,你也可以设置
+`llvm.download-ci-llvm = true` 来直接下载预构建的 LLVM。否则,你需要自行安装
+LLVM 并确保 `llvm-config` 在 PATH 中。更多信息见
+[rustc-dev-guide][sysllvm]。
 
 [sysllvm]: https://rustc-dev-guide.rust-lang.org/building/new-target.html#using-pre-built-llvm
 
 
-## Building on a Unix-like system
+## 在类 Unix 系统上构建
 
-### Build steps
+### 构建步骤
 
-1. Clone the [source] with `git`:
+1. 用 `git` 克隆[源码][source]:
 
    ```sh
    git clone https://github.com/rust-lang/rust.git
@@ -73,14 +67,13 @@ See [the rustc-dev-guide for more info][sysllvm].
 
 [source]: https://github.com/rust-lang/rust
 
-2. Configure the build settings:
+2. 配置构建选项:
 
-   If you're unsure which build configurations to use and need a good default, you
-   can run the interactive `x.py setup` command. This will guide you through selecting
-   a config profile, setting up the LSP, configuring a Git hook, etc.
+   如果不确定该用哪种构建配置、需要一个不错的默认值,可以运行交互式的
+   `x.py setup` 命令。它会引导你选择配置档案、设置 LSP、配置 Git 钩子等。
 
-   With `configure` script, you can handle multiple configurations in a single
-   command which is useful to create complex/advanced config files. For example:
+   使用 `configure` 脚本可以在单条命令里处理多项配置,适合生成复杂/高级的
+   配置文件。例如:
 
    ```sh
    ./configure --build=aarch64-unknown-linux-gnu \
@@ -102,57 +95,50 @@ See [the rustc-dev-guide for more info][sysllvm].
       --set rust.codegen-units=1
    ```
 
-   If you plan to use `x.py install` to create an installation, you can either
-   set `DESTDIR` environment variable to your custom directory path:
+   如果你打算用 `x.py install` 进行安装,可以把 `DESTDIR` 环境变量设为你的
+   自定义目录路径:
 
    ```bash
-   export DESTDIR=<path>
+   export DESTDIR=<路径>
    ```
 
-   or set `prefix` and `sysconfdir` in the `[install]` section to your custom
-   directory path:
+   或者在 `[install]` 配置段中把 `prefix` 和 `sysconfdir` 设为自定义目录路径:
 
    ```sh
-   ./configure --set install.prefix=<path> --set install.sysconfdir=<path>
+   ./configure --set install.prefix=<路径> --set install.sysconfdir=<路径>
    ```
 
-   When the `DESTDIR` environment variable is present, the `prefix` and
-   `sysconfdir` values are combined with the path from the `DESTDIR`
-   environment variable.
+   当 `DESTDIR` 环境变量存在时,`prefix` 和 `sysconfdir` 的值会与 `DESTDIR`
+   环境变量中的路径拼接。
 
-3. Build and install:
+3. 构建并安装:
 
    ```sh
    ./x.py build && ./x.py install
    ```
 
-   When complete, `./x.py install` will place several programs into
-   `$PREFIX/bin`: `rustc`, the Rust compiler, and `rustdoc`, the
-   API-documentation tool. By default, it will also include [Cargo], Rust's
-   package manager. You can disable this behavior by passing
-   `--set build.extended=false` to `./configure`.
+   完成后,`./x.py install` 会把若干程序放入 `$PREFIX/bin`:`rustc`(Rust
+   编译器)和 `rustdoc`(API 文档工具)。默认还会包含 Rust 的包管理器
+   [Cargo]。向 `./configure` 传入 `--set build.extended=false` 可以禁用该行为。
 
 [Cargo]: https://github.com/rust-lang/cargo
 
-### Configure and Make
+### Configure 与 Make
 
-This project provides a configure script and makefile (the latter of which just
-invokes `x.py`). `./configure` is the recommended way to programmatically
-generate a `bootstrap.toml`. `make` is not recommended (we suggest using `x.py`
-directly), but it is supported and we try not to break it unnecessarily.
+本项目提供 configure 脚本和 makefile(后者只是转调 `x.py`)。`./configure`
+是以编程方式生成 `bootstrap.toml` 的推荐方式。不推荐使用 `make`(建议直接用
+`x.py`),但我们支持它,并尽量避免无谓地破坏它。
 
 ```sh
 ./configure
 make && sudo make install
 ```
 
-`configure` generates a `bootstrap.toml` which can also be used with normal `x.py`
-invocations.
+`configure` 生成的 `bootstrap.toml` 同样可以用于普通的 `x.py` 调用。
 
-## Building on Windows
+## 在 Windows 上构建
 
-On Windows, we suggest using [winget] to install dependencies by running the
-following in a terminal:
+在 Windows 上,建议使用 [winget] 安装依赖,在终端中运行以下命令:
 
 ```powershell
 winget install -e Python.Python.3
@@ -160,52 +146,45 @@ winget install -e Kitware.CMake
 winget install -e Git.Git
 ```
 
-Then edit your system's `PATH` variable and add: `C:\Program Files\CMake\bin`.
-See
-[this guide on editing the system `PATH`](https://www.java.com/en/download/help/path.html)
-from the Java documentation.
+然后编辑系统的 `PATH` 变量,添加:`C:\Program Files\CMake\bin`。编辑方法见
+Java 文档中的[修改系统 `PATH` 指南](https://www.java.com/en/download/help/path.html)。
 
 [winget]: https://github.com/microsoft/winget-cli
 
-There are two prominent ABIs in use on Windows: the native (MSVC) ABI used by
-Visual Studio and the GNU ABI used by the GCC toolchain. Which version of Rust
-you need depends largely on what C/C++ libraries you want to interoperate with.
-Use the MSVC build of Rust to interop with software produced by Visual Studio
-and the GNU build to interop with GNU software built using the MinGW/MSYS2
-toolchain.
+Windows 上有两种主流 ABI:Visual Studio 使用的原生(MSVC)ABI,以及 GCC 工具链
+使用的 GNU ABI。你需要哪个版本的 Rust,主要取决于想与哪些 C/C++ 库互操作。
+要与 Visual Studio 生成的软件互操作,请使用 Rust 的 MSVC 构建;要与
+MinGW/MSYS2 工具链构建的 GNU 软件互操作,请使用 GNU 构建。
 
 ### MinGW
 
-[MSYS2][msys2] can be used to easily build Rust on Windows:
+可以使用 [MSYS2][msys2] 在 Windows 上轻松构建 Rust:
 
 [msys2]: https://www.msys2.org/
 
-1. Download the latest [MSYS2 installer][msys2] and go through the installer.
+1. 下载最新的 [MSYS2 安装程序][msys2]并完成安装。
 
-2. Download and install [Git for Windows](https://git-scm.com/download/win).
-   Make sure that it's in your Windows PATH. To enable access to it from within
-   MSYS2, edit the relevant `mingw[32|64].ini` file in your MSYS2 installation
-   directory and uncomment the line `MSYS2_PATH_TYPE=inherit`.
+2. 下载并安装 [Git for Windows](https://git-scm.com/download/win)。确保它在
+   Windows PATH 中。为了在 MSYS2 内部访问它,请编辑 MSYS2 安装目录下的
+   `mingw[32|64].ini` 文件,取消注释 `MSYS2_PATH_TYPE=inherit` 这一行。
 
-   You could install and use MSYS2's version of git instead with `pacman`,
-   however this is not recommended as it's excruciatingly slow, and not frequently
-   tested for compatibility.
+   你也可以改用 `pacman` 安装并使用 MSYS2 自带的 git,但不推荐:它非常慢,
+   而且兼容性不常被测试。
 
-3. Start a MINGW64 or MINGW32 shell (depending on whether you want 32-bit
-   or 64-bit Rust) either from your start menu, or by running `mingw64.exe`
-   or `mingw32.exe` from your MSYS2 installation directory (e.g. `C:\msys64`).
+3. 从开始菜单启动 MINGW64 或 MINGW32 shell(取决于你要构建 32 位还是 64 位
+   Rust),或者从 MSYS2 安装目录(如 `C:\msys64`)运行 `mingw64.exe` 或
+   `mingw32.exe`。
 
-4. From this terminal, install the required tools:
+4. 在该终端中安装所需工具:
 
    ```sh
-   # Update package mirrors (may be needed if you have a fresh install of MSYS2)
+   # 更新包镜像(全新安装 MSYS2 后可能需要)
    pacman -Sy pacman-mirrors
 
-   # Install build tools needed for Rust. If you're building a 32-bit compiler,
-   # then replace "x86_64" below with "i686". 
-   # Note that it is important that you do **not** use the 'python2', 'cmake',
-   # and 'ninja' packages from the 'msys2' subsystem.
-   # The build has historically been known to fail with these packages.
+   # 安装 Rust 需要的构建工具。若构建 32 位编译器,
+   # 把下面的 "x86_64" 替换为 "i686"。
+   # 注意:**不要**使用 'msys2' 子系统的 'python2'、'cmake' 和 'ninja' 包,
+   # 使用这些包构建历来容易失败。
    pacman -S make \
                diffutils \
                tar \
@@ -215,96 +194,85 @@ toolchain.
                mingw-w64-x86_64-ninja
    ```
 
-5. Navigate to Rust's source code (or clone it), then build it:
+5. 进入 Rust 源码目录(或先克隆),然后构建:
 
    ```sh
    python x.py setup dist && python x.py build && python x.py install
    ```
 
-If you want to try the native Windows versions of Python or CMake, you can remove
-them from the above pacman command and install them from another source. Follow
-the instructions in step 2 to get them on PATH.
+   如果你想尝试 Windows 原生版本的 Python 或 CMake,可以从上面的 pacman
+   命令中移除它们,改从其他来源安装,并按第 2 步的说明加入 PATH。
 
-Using Windows native Python can be helpful if you get errors when building LLVM.
-You may also want to use Git for Windows, as it is often *much* faster. Turning
-off real-time protection in the Windows Virus & Threat protections settings can
-also help with long run times (although note that it will automatically turn
-itself back on after some time).
+   使用 Windows 原生 Python 有助于解决构建 LLVM 时的报错。你也可能想使用
+   Git for Windows,因为它通常*快得多*。在 Windows 的"病毒和威胁防护"设置中
+   关闭实时保护,也有助于缩短漫长的构建时间(注意它一段时间后会自动重新开启)。
 
 ### MSVC
 
-MSVC builds of Rust additionally require an installation of:
+Rust 的 MSVC 构建还需要安装:
 
-- Visual Studio 2022 (or later) build tools so `rustc` can use its linker. Older
-  Visual Studio versions such as 2019 *may* work but aren't actively tested.
-- A recent Windows 10 or 11 SDK.
+- Visual Studio 2022(或更新版本)的构建工具,以便 `rustc` 使用其链接器。
+  更旧的版本(如 2019)*也许*能用,但不在主动测试范围内。
+- 较新的 Windows 10 或 11 SDK。
 
-The simplest way is to get [Visual Studio], check the "C++ build tools".
+最简单的方式是安装 [Visual Studio],勾选"C++ build tools"。
 
 [Visual Studio]: https://visualstudio.microsoft.com/downloads/
 
-(If you're installing CMake yourself, be careful that "C++ CMake tools for
-Windows" doesn't get included under "Individual components".)
+(如果你自行安装 CMake,注意不要把"Single components"里的
+"C++ CMake tools for Windows" 混进去。)
 
-With these dependencies installed, you can build the compiler in a `cmd.exe`
-shell with:
+装好这些依赖后,即可在 `cmd.exe` shell 中构建编译器:
 
 ```sh
 python x.py setup user
 python x.py build
 ```
 
-Right now, building Rust only works with some known versions of Visual Studio.
-If you have a more recent version installed and the build system doesn't
-understand, you may need to force bootstrap to use an older version.
-This can be done by manually calling the appropriate vcvars file before running
-the bootstrap.
+目前 Rust 只能用若干已知版本的 Visual Studio 构建。如果你安装了更新的版本而
+构建系统无法识别,可能需要强制 bootstrap 使用旧版本。方法是在运行 bootstrap
+之前手动调用相应的 vcvars 脚本。
 
 ```batch
 CALL "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
 python x.py build
 ```
 
-### Specifying an ABI
+### 指定 ABI
 
-Each specific ABI can also be used from either environment (for example, using
-the GNU ABI in PowerShell) by using an explicit build triple. The available
-Windows build triples are:
-- GNU ABI (using GCC)
+每种 ABI 也可以在任意环境中通过显式构建三元组(build triple)来使用
+(例如在 PowerShell 中使用 GNU ABI)。可用的 Windows 构建三元组:
+- GNU ABI(使用 GCC)
     - `i686-pc-windows-gnu`
     - `x86_64-pc-windows-gnu`
-- The MSVC ABI
+- MSVC ABI
     - `i686-pc-windows-msvc`
     - `x86_64-pc-windows-msvc`
 
-The build triple can be specified by either specifying `--build=<triple>` when
-invoking `x.py` commands, or by creating a `bootstrap.toml` file (as described in
-[Building on a Unix-like system](#building-on-a-unix-like-system)), and passing
-`--set build.build=<triple>` to `./configure`.
+构建三元组可以在调用 `x.py` 命令时通过 `--build=<三元组>` 指定,也可以创建
+`bootstrap.toml` 文件(如[在类 Unix 系统上构建](#在类-unix-系统上构建)所述)
+并向 `./configure` 传入 `--set build.build=<三元组>`。
 
-## Building Documentation
+## 构建文档
 
-If you'd like to build the documentation, it's almost the same:
+如果想构建文档,几乎一样:
 
 ```sh
 ./x.py doc
 ```
 
-The generated documentation will appear under `doc` in the `build` directory for
-the ABI used. That is, if the ABI was `x86_64-pc-windows-msvc`, the directory
-will be `build\x86_64-pc-windows-msvc\doc`.
+生成的文档会出现在 `build` 目录下对应所用 ABI 的 `doc` 子目录中。也就是说,
+如果 ABI 是 `x86_64-pc-windows-msvc`,目录就是
+`build\x86_64-pc-windows-msvc\doc`。
 
-## Notes
+## 说明
 
-Since the Rust compiler is written in Rust, it must be built by a precompiled
-"snapshot" version of itself (made in an earlier stage of development).
-As such, source builds require an Internet connection to fetch snapshots, and an
-OS that can execute the available snapshot binaries.
+由于 Rust 编译器本身用 Rust 编写,它必须由一个预编译的"快照"版本
+(在更早的开发阶段生成)来构建。因此,源码构建需要联网获取快照,并且操作
+系统要能运行这些快照二进制文件。
 
-See https://doc.rust-lang.org/nightly/rustc/platform-support.html for a list of
-supported platforms.
-Only "host tools" platforms have a pre-compiled snapshot binary available; to
-compile for a platform without host tools you must cross-compile.
+支持的平台列表见 https://doc.rust-lang.org/nightly/rustc/platform-support.html 。
+只有"host tools"平台才有预编译的快照二进制;要为没有 host tools 的平台编译,
+必须交叉编译。
 
-You may find that other platforms work, but these are our officially supported
-build environments that are most likely to work.
+其他平台也可能可以工作,但上面列出的才是官方支持的构建环境,成功率最高。
