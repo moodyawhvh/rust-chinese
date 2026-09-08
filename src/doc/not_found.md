@@ -1,4 +1,6 @@
-% Not Found
+> 🌐 本文档由 [rust-lang/rust](https://github.com/rust-lang/rust) 翻译,英文原版见原项目。
+
+% 页面未找到
 
 <!-- Completely hide the TOC and the section numbers -->
 <style type="text/css">
@@ -29,35 +31,35 @@ li {list-style-type: none; }
 }
 </style>
 
-Looks like you've taken a wrong turn.
+看起来你走错路了。
 
-Some things that might be helpful to you though:
+下面这些也许能帮到你:
 
-# Search
+# 搜索
 
 <div>
   <form id="search-form" action="https://duckduckgo.com/">
     <input id="search-input" type="search" name="q"></input>
-    <input type="submit" value="Search" id="search-but">
+    <input type="submit" value="搜索" id="search-but">
     <!--
       Don't show the options by default,
       since "From the Standard Library" doesn't work without JavaScript
     -->
     <fieldset id="search-from" style="display:none">
-      <label><input name="from" value="library" type="radio"> From the Standard Library</label>
-      <label><input name="from" value="duckduckgo" type="radio" checked> From DuckDuckGo</label>
+      <label><input name="from" value="library" type="radio"> 标准库内搜索</label>
+      <label><input name="from" value="duckduckgo" type="radio" checked> 用 DuckDuckGo 搜索</label>
     </fieldset>
   </form>
 </div>
 
-# Reference
+# 参考资源
 
- * [The Rust official site](https://www.rust-lang.org)
- * [The Rust reference](https://doc.rust-lang.org/reference/index.html)
+ * [Rust 官方网站](https://www.rust-lang.org)
+ * [Rust 参考手册](https://doc.rust-lang.org/reference/index.html)
 
-# Docs
+# 文档
 
-[The standard library](https://doc.rust-lang.org/std/)
+[标准库文档](https://doc.rust-lang.org/std/)
 
 <script>
 function get_url_fragments() {

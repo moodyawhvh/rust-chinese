@@ -1,4 +1,6 @@
-% Rust Documentation
+> 🌐 本文档由 [rust-lang/rust](https://github.com/rust-lang/rust) 翻译,英文原版见原项目。
+
+% Rust 文档
 
 <style>
 nav {
@@ -42,163 +44,147 @@ svg.external-link {
 }
 </style>
 
-Welcome to an overview of the documentation provided by the [Rust
-project]. This page contains links to various helpful references,
-most of which are available offline (if opened with `rustup doc`). Many of these
-resources take the form of "books"; we collectively call these "The Rust
-Bookshelf." Some are large, some are small.
+这里是 [Rust 项目]文档总览。本页面收录了各种实用的参考资源链接,其中大部分
+可以离线阅读(通过 `rustup doc` 打开)。这些资源多以"书"的形式呈现,我们统称
+之为"Rust 书架(The Rust Bookshelf)"。有的鸿篇巨制,有的短小精悍。
 
-All of these books are managed by the Rust Organization, but other unofficial
-documentation resources are included here as well!
+这些书全部由 Rust 官方组织维护,不过这里也收录了其他非官方的文档资源!
 
-If you're just looking for the standard library reference, here it is:
-[Rust API documentation](std/index.html)
+如果你只是想找标准库参考文档,它在这里:
+[Rust API 文档](std/index.html)
 
 
-## Learning Rust
+## 学习 Rust
 
-If you'd like to learn Rust, this is the section for you! All of these resources
-assume that you have programmed before, but not in any specific language:
+如果你想学 Rust,这一节就是为你准备的!以下资源都假设你有一定编程经验,
+但不要求掌握任何特定语言:
 
 ### The Rust Programming Language
 
-Affectionately nicknamed "the book," [The Rust Programming Language](book/index.html)
-will give you an overview of the language from first principles. You'll build a
-few projects along the way, and by the end, you'll have a solid grasp of how to
-use the language.
+昵称亲切地叫作"the book"的[《The Rust Programming Language》](book/index.html),
+会从第一性原理出发带你纵览这门语言。学习过程中你会完成几个小项目,读完后
+就能扎实地掌握这门语言的用法。
 
 ### Rust By Example
 
-If reading multiple hundreds of pages about a language isn't your style, then
-[Rust By Example](rust-by-example/index.html) has you covered. RBE shows off a
-bunch of code without using a lot of words. It also includes exercises!
+如果你不喜欢捧着几百页的书啃,那 [Rust By Example](rust-by-example/index.html)
+正合适。RBE 用大量代码、极少文字展示语言特性,还附带练习!
 
 ### Rustlings
 
-[Rustlings](https://github.com/rust-lang/rustlings) guides you
-through downloading and setting up the Rust toolchain, then provides an
-interactive tool that teaches you how to solve coding challenges in Rust.
+[Rustlings](https://github.com/rust-lang/rustlings)
+会引导你下载并配置 Rust 工具链,然后通过一个交互式工具教你解决一个个
+Rust 编码挑战。
 
 ### Rust Playground
 
-The [Rust Playground](https://play.rust-lang.org) is a great place
-to try out and share small bits of code, or experiment with some of the most
-popular crates.
+[Rust Playground](https://play.rust-lang.org) 是尝试和分享小段代码、
+试验热门 crate 的好地方。
 
 
-## Using Rust
+## 使用 Rust
 
-Once you've gotten familiar with the language, these resources can help you put
-it to work.
+熟悉了语言之后,这些资源能帮你把它用起来。
 
-### The Standard Library
+### 标准库
 
-Rust's standard library has [extensive API documentation](std/index.html), with
-explanations of how to use various things, as well as example code for
-accomplishing various tasks. Code examples have a "Run" button on hover that
-opens the sample in the playground.
+Rust 标准库有[详尽的 API 文档](std/index.html),既讲解各种 API 的用法,
+也提供完成各类任务的示例代码。示例代码悬停时会出现"Run"按钮,点击即可在
+playground 中运行示例。
 
 <div>
   <form action="std/index.html" method="get">
     <input id="search-input" type="search" name="search"
-           placeholder="Search through the standard library"/>
-    <button id="search-but">Search</button>
+           placeholder="搜索标准库"/>
+    <button id="search-but">搜索</button>
   </form>
 </div>
 
-### Your Personal Documentation
+### 你自己的文档
 
-Whenever you are working in a crate, `cargo doc --open` will generate
-documentation for your project _and_ all its dependencies in their correct
-version, and open it in your browser. Add the flag `--document-private-items` to
-also show items not marked `pub`.
+在 crate 中工作时,`cargo doc --open` 会为你的项目*以及*它的全部依赖(以各自
+正确的版本)生成文档,并在浏览器中打开。加上 `--document-private-items`
+参数,还可以显示未标记 `pub` 的条目。
 
-### Rust Version History
+### Rust 版本历史
 
-[The Release Notes](releases.html) describes the change history of the Rust
-toolchain and language.
+[发行说明](releases.html)记录了 Rust 工具链与语言的变更历史。
 
-[The Edition Guide](edition-guide/index.html) describes the Rust editions and
-their differences. The latest version of the toolchain supports all
-historical editions.
+[版本指南(Edition Guide)](edition-guide/index.html)介绍了 Rust 各个版本
+(edition)及其差异。最新工具链支持所有历史版本。
 
-### The `rustc` Book
+### `rustc` 手册
 
-[The `rustc` Book](rustc/index.html) describes the Rust compiler, `rustc`.
+[`rustc` 手册](rustc/index.html)介绍 Rust 编译器 `rustc`。
 
-### The Cargo Book
+### Cargo 手册
 
-[The Cargo Book](cargo/index.html) is a guide to Cargo, Rust's build tool and
-dependency manager.
+[Cargo 手册](cargo/index.html)是 Cargo 的使用指南,Cargo 是 Rust 的构建
+工具和依赖管理器。
 
-### The Rustdoc Book
+### Rustdoc 手册
 
-[The Rustdoc Book](rustdoc/index.html) describes our documentation tool, `rustdoc`.
+[Rustdoc 手册](rustdoc/index.html)介绍我们的文档工具 `rustdoc`。
 
-### The Clippy Book
+### Clippy 手册
 
-[The Clippy Book](clippy/index.html) describes our static analyzer, Clippy.
+[Clippy 手册](clippy/index.html)介绍我们的静态分析器 Clippy。
 
-### Extended Error Listing
+### 错误码扩展列表
 
-Many of Rust's errors come with error codes, and you can request extended
-diagnostics from the compiler on those errors (with `rustc --explain`). You can
-also read them here if you prefer: [rustc error codes](error_codes/index.html)
+Rust 的许多错误带有错误码,你可以让编译器给出扩展诊断(`rustc --explain`)。
+如果愿意,也可以在这里阅读:[rustc 错误码](error_codes/index.html)
 
 
-## Mastering Rust
+## 精通 Rust
 
-Once you're quite familiar with the language, you may find these advanced
-resources useful.
+当你已经相当熟悉这门语言,这些进阶资源会派上用场。
 
-### The Reference
+### 参考(The Reference)
 
-[The Reference](reference/index.html) is not a formal spec, but is more detailed
-and comprehensive than the book.
+[参考手册](reference/index.html)虽不是正式规范,但比 the book 更详细、
+更全面。
 
-### The Style Guide
+### 风格指南
 
-[The Rust Style Guide](style-guide/index.html) describes the standard formatting
-of Rust code. Most developers use `cargo fmt` to invoke `rustfmt` and format the
-code automatically (the result matches this style guide).
+[Rust 风格指南](style-guide/index.html)描述了 Rust 代码的标准格式。大多数
+开发者用 `cargo fmt` 调用 `rustfmt` 自动格式化代码(结果与该风格指南一致)。
 
-### The Rustonomicon
+### Rustonomicon
 
-[The Rustonomicon](nomicon/index.html) is your guidebook to the dark arts of
-unsafe Rust. It's also sometimes called "the 'nomicon."
+[Rustonomicon](nomicon/index.html) 是 unsafe Rust 黑魔法指南,有时也被
+称为"the 'nomicon"。
 
-### The Unstable Book
+### Unstable Book
 
-[The Unstable Book](unstable-book/index.html) has documentation for unstable
-features.
+[The Unstable Book](unstable-book/index.html) 收录了不稳定(unstable)
+特性的文档。
 
-### The `rustc` Development Guide
+### `rustc` 开发指南
 
-[The `rustc-dev-guide`](https://rustc-dev-guide.rust-lang.org/)
-documents how the compiler works and how to contribute to it. This is useful if
-you want to build or modify the Rust compiler from source (e.g. to target
-something non-standard).
+[`rustc-dev-guide`](https://rustc-dev-guide.rust-lang.org/)
+记录了编译器的工作原理以及如何为它做贡献。如果你想从源码构建或修改 Rust
+编译器(比如面向非标准目标),它会非常有用。
 
 
-## Specialized Rust
+## 专用领域
 
-When using Rust in specific domains, consider using the following resources
-tailored to each area.
+在特定领域使用 Rust 时,可以参考为各领域量身定制的资源。
 
-### Embedded Systems
+### 嵌入式系统
 
-When developing for Bare Metal or Embedded Linux systems, you may find these
-resources maintained by the [Embedded Working Group] useful.
+开发裸机(Bare Metal)或嵌入式 Linux 系统时,[嵌入式工作组]维护的这些资源
+可能对你有用。
 
 [Embedded Working Group]: https://github.com/rust-embedded
 
 #### The Embedded Rust Book
 
-[The Embedded Rust Book] is targeted at developers who are familiar with embedded
-development and Rust, but who have not used Rust for embedded development.
+[The Embedded Rust Book] 面向熟悉嵌入式开发和 Rust、但尚未用 Rust 做过
+嵌入式开发的开发者。
 
 [The Embedded Rust Book]: embedded-book/index.html
-[Rust project]: https://www.rust-lang.org
+[Rust 项目]: https://www.rust-lang.org
 
 <script>
 // check if a given link is external

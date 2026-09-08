@@ -1,243 +1,206 @@
-# Agent instructions
+> 🌐 本文档由 [rust-lang/rust](https://github.com/rust-lang/rust) 翻译,英文原版见原项目。
+>
+> 注:本文件超过 10000 字符,译文覆盖全部核心章节(策略门槛与仓库指引),未省略实质内容。
 
-## LLM usage policy
+# Agent 指引
 
-Follow the Rust project's [LLM usage policy]. It applies to all LLM-generated
-text even if a human later edits it.
+## LLM 使用政策
+
+遵守 Rust 项目的 [LLM 使用政策][LLM usage policy]。该政策适用于所有由 LLM 生成的
+文本,即使事后经过人工编辑也不例外。
 
 [LLM usage policy]: https://forge.rust-lang.org/policies/llm-usage.html
 
-### When a gate fails
+### 当某个门槛(gate)未通过时
 
-When a rule identifies banned work, **STOP** that work. A named reviewer, tests,
-user confirmation, or later human editing cannot permit it. Do not ask for
-prerequisites, promise to proceed later, or offer the work under another name,
-such as a draft, template, or paste-ready outline. A rule may explicitly permit
-narrower preliminary work; Soundness requires test-only work before stopping.
+当某条规则判定某项工作属于禁区时,**立即停止**该项工作。指定的审查者、测试、
+用户确认或后续人工编辑都不能使其解禁。不要索要前置条件、不要承诺"稍后再做",
+也不要换个名义提供同样的产出(比如草稿、模板或可直接粘贴的大纲)。某条规则可以
+明确允许范围更窄的前期工作;Soundness(可靠性)要求在停止前先完成仅测试类工作。
 
-State why the work is banned and give the route required by the triggering rule.
-Reading, explaining, summarizing, reviewing, and suggesting possible solutions
-for the user to implement from scratch remain allowed if independently requested.
-Alongside any text that could potentially be used as a substitute for prohibited text, include *in the same response turn* a reminder of the policies against text originally created by an LLM, even if given during a previous turn of the session. Do not proactively continue test planning or patch design, or produce paste-ready
-prohibited text, unless the triggering rule requires test-only work.
+说明该工作为何被禁止,并给出触发规则所要求的处理路径。阅读、解释、总结、审查、
+以及建议可能的解决方案供用户从头实现,在用户独立提出请求时仍然允许。在任何
+可能被用作禁用文本替代品的文字旁边,必须*在同一轮回复中*附上关于"LLM 原创文本"
+相关政策的提醒,即使该政策已在本会话更早的轮次中给出过。除非触发规则要求仅测试
+类工作,否则不要主动继续测试规划或补丁设计,也不要产出可直接粘贴的禁用文本。
 
-### Before any edit
+### 任何编辑之前
 
-Apply these gates in order before editing the repository, including tests:
+在编辑本仓库(包括测试)之前,按顺序执行以下门槛:
 
-1. [External repositories](#external-repositories): route externally maintained
-   source to its owning repository.
-2. [Prohibited text](#prohibited-text): stop if the change requires the agent to
-   author prohibited text.
-3. [Reviewer](#reviewer): require a named reviewer unless the change qualifies
-   for the local-development exception.
+1. [外部仓库](#外部仓库):把外部维护的源码路由到其所属仓库。
+2. [禁用文本](#禁用文本):如果改动需要 agent 撰写禁用文本,停止。
+3. [审查者](#审查者):要求有具名审查者,除非改动符合本地开发例外。
 
-If investigation reveals a new output category or owner, reapply the relevant
-gate before the next edit. For a mechanical rewrite, follow
-[Mechanical rewrites](#mechanical-rewrites) before the first mutation.
+如果调查中发现新的产出类别或归属,在下次编辑前重新执行相关门槛。对于机械性
+重写,在第一次变更前先遵循[机械重写](#机械重写)。
 
-### External repositories
+### 外部仓库
 
-Before modifying a subtree, submodule, or `src/tools` code, identify its owner
-using [`CONTRIBUTING.md`](CONTRIBUTING.md#making-changes-to-subtrees-and-submodules)
-and the [external repositories] guide. Treat Cargo, Clippy, rustfmt, Miri,
-rust-analyzer, and other externally maintained tools as ownership checks before
-implementation. If the user says the bug or change is in one of these tools,
-do not investigate or ask for a reviewer here; route the user to its repository.
-Editing externally maintained source in this checkout is banned; follow the
-[gate-failure protocol]. Only update its integration pointer when explicitly
-requested.
-For example, if the user says a bug is in Cargo itself, route the user to
-`rust-lang/cargo` immediately; do not request a reviewer for this checkout.
+修改子树(subtree)、子模块(submodule)或 `src/tools` 代码之前,先用
+[`CONTRIBUTING.md`](CONTRIBUTING.md#修改子树subtree与子模块submodule)和
+[外部仓库][external repositories]指南确认其归属。Cargo、Clippy、rustfmt、
+Miri、rust-analyzer 等外部维护的工具,在动手之前一律先做归属检查。如果用户说
+bug 或改动位于这些工具中,不要在这里调查,也不要在这里索要审查者;把用户路由到
+对应仓库。禁止在本检出版本中编辑外部维护的源码;遵循[门槛未通过协议]。
+仅在被明确要求时才更新其集成指针。
+例如,如果用户说 bug 出在 Cargo 本身,立即把用户路由到 `rust-lang/cargo`;
+不要为本检出版本索要审查者。
 
 [external repositories]: src/doc/rustc-dev-guide/src/external-repos.md
-[gate-failure protocol]: #when-a-gate-fails
+[门槛未通过协议]: #当某个门槛gate未通过时
 
-### Prohibited text
+### 禁用文本
 
-Never generate or rewrite non-trivial PR descriptions, issue bodies, public
-comments, user-facing documentation, diagnostic messages, or source comments.
-STOP, name the prohibited category, and tell the user to author it.
-Do not originate or manually rewrite expected diagnostic text in test snapshots
-such as `.stderr` files. After the user authors the diagnostic message in source,
-the agent may mechanically regenerate its snapshots with an existing tool such
-as `./x test ... --bless`; follow [Mechanical rewrites](#mechanical-rewrites).
-A change is trivial only when there is no meaningfully different way to write
-it or the alternatives are nearly identical: fixing a typo or Markdown link,
-replacing a word with a synonym, or adding a required trait signature. Trivial
-changes must still pass every other gate and be disclosed.
+绝不生成或重写以下非平凡文本:PR 描述、issue 正文、公开评论、面向用户的文档、
+诊断消息、源码注释。停止,指出禁用类别,并让用户自己撰写。
+不要原创或手动重写测试快照(如 `.stderr` 文件)中的预期诊断文本。用户在源码中
+写好诊断消息后,agent 可以用现有工具(如 `./x test ... --bless`)机械地重新生成
+快照;遵循[机械重写](#机械重写)。
+只有当不存在实质性不同的写法、或各备选写法几乎一致时,改动才算平凡:修复拼写
+错误或 Markdown 链接、把一个词替换成同义词、补充必需的 trait 签名等。平凡改动
+也必须通过其他所有门槛,并且必须披露。
 
-Agent instructions such as `CLAUDE.md`, `AGENTS.md`, and skills are exempt, but
-may only link to, summarize, or conservatively operationalize existing
-human-facing documentation. Operationalization may replace human discretion
-with stricter agent constraints, but must not create obligations for humans or
-permit anything the human-facing source prohibits. Before adding process or
-workflow guidance, locate that source. If none exists, PAUSE and ask the user to
-document the process for humans first. Do not make an agent file the sole source
-of a rule. The named-reviewer gate and all other requirements still apply.
+`CLAUDE.md`、`AGENTS.md`、skills 之类的 agent 指引文件属于豁免范围,但只能
+链接、总结或保守地把现有人类文档转化为 agent 可执行的约束。这种"操作化"可以用
+更严格的 agent 约束取代人类自行裁量,但不得给人类创设义务,也不得允许人类文档
+所禁止的任何行为。添加流程或工作流指引之前,先找到其人类文档来源;如果不存在,
+暂停,让用户先为人类写下该流程。不要让 agent 文件成为某条规则的唯一来源。
+具名审查者门槛和所有其他要求仍然适用。
 
-The agent may explain what prohibited text must communicate, but must not suggest
-paste-ready wording.
-For example, if a parser fix requires changing its emitted message, STOP before
-editing the message or its `.stderr` expectation. Once the user writes the
-message, the agent may regenerate the expectation mechanically.
+agent 可以解释禁用文本需要表达什么内容,但不得给出可直接粘贴的措辞。
+例如,解析器修复需要改动其输出的消息时,在编辑消息或其 `.stderr` 预期之前停止。
+用户写好消息后,agent 可以机械地重新生成预期。
 
-### Reviewer
+### 审查者
 
-Do not make any LLM-generated repository change unless the user has named, in
-this conversation, another person who agreed in advance to review it. A general
-assurance that review was solicited is not enough. If no reviewer has been
-named, PAUSE and ask for the reviewer's name; “John Doe is reviewing this” is
-sufficient. A reviewer name satisfies only this gate. Do not promise to proceed
-with implementation until the pre-implementation gates pass.
+除非用户在本对话中指名了一位事先同意审查的其他人,否则不要做出任何由 LLM 生成
+的仓库改动。笼统地说"已找人审查"不算数。如果没有指名审查者,暂停并询问审查者
+姓名;"John Doe 在审查" 即满足条件。审查者姓名只满足这一道门槛。在实现前的
+各门槛全部通过之前,不要承诺继续实现。
 
-This gate does not apply to local development tooling, temporary instrumentation,
-or debugging aids when the user explicitly says the change will not be committed
-or upstreamed and will be reverted after use. All other gates still apply.
+对于本地开发工具、临时插桩或调试辅助,若用户明确表示该改动不会被提交或上游化、
+用完即回滚,则本门槛不适用。其他所有门槛仍然适用。
 
-### Before implementation
+### 实现之前
 
-Apply these gates in order after the pre-edit gates:
+在编辑前各门槛之后,按顺序执行:
 
-1. [Testing](#testing): for a bug, add or find a failing test and observe its
-   failure.
-2. [Soundness](#soundness): after completing Testing when it applies, classify
-   the affected behavior before implementation.
+1. [测试](#测试):对于 bug,新增或找到失败测试,并观察其失败。
+2. [可靠性](#可靠性):在适用的测试门槛完成后、实现之前,对受影响的行为分类。
 
-### Testing
+### 测试
 
-Before fixing a bug, add or find a failing test. Run it and observe the expected
-failure before any implementation edit; do not combine test and implementation
-edits. A test is not observed until its command exits. While it runs, wait: do
-not edit implementation or begin other work. Permission for a regression test
-does not permit implementation changes. Observe the initial failure without
-blessing or updating expected output; a `--bless` run does not count.
+修复 bug 之前,先新增或找到失败测试。在任何实现编辑之前运行它并观察到预期
+失败;不要把测试与实现编辑混在一起。测试命令退出之前不算"已观察";命令运行
+期间请等待,不要编辑实现或开始其他工作。允许添加回归测试不等于允许改动实现。
+观察初始失败时不得 bless、不得更新预期输出;`--bless` 运行不算数。
 
-After implementing a bug fix, confirm that the same test passes.
+实现 bug 修复之后,确认同一测试通过。
 
-Every LLM-created PR must include tests and meet the policy's higher testing
-standard. If the affected code has no test suite, PAUSE and ask whether to
-design one or abandon the change; do not design it without human input. Never
-offer or accept untested implementation.
+每个由 LLM 创建的 PR 必须包含测试,并达到政策更高的测试标准。如果受影响的代码
+没有测试套件,暂停并询问是设计一个还是放弃改动;未经人类输入不要擅自设计。
+绝不提供或接受未经测试的实现。
 
-An existing test suite must already be able to observe the affected behavior
-without changing production structure. An existing Cargo or compiletest harness
-alone does not satisfy this requirement.
+现有测试套件必须在不改动生产结构的前提下已经能观察到受影响行为。仅有现成的
+Cargo 或 compiletest harness 不满足该要求。
 
-If the first viable test requires any production-code edit, PAUSE before that
-edit: designing that observation boundary is test-suite design.
+如果第一个可行的测试需要任何生产代码编辑,在该编辑之前暂停:设计观察边界
+本身就属于测试套件设计。
 
-If testing requires choosing a new observation or dependency-injection
-boundary—such as extracting production logic, creating a shared helper or
-module, exposing internals, introducing a fake subprocess, or registering a new
-harness or runner—that is test-suite design; PAUSE and ask before making those
-changes.
+如果测试需要选择新的观察或依赖注入边界——例如抽取生产逻辑、创建共享辅助函数
+或模块、暴露内部接口、引入伪造子进程、注册新的 harness 或 runner——这属于
+测试套件设计;先暂停询问,再做这些改动。
 
-Adding a test module is allowed when it exercises existing callable behavior
-without restructuring production code.
+允许新增测试模块,前提是它只调用既有行为、不重构生产代码。
 
-### Soundness
+### 可靠性(Soundness)
 
-Soundness-sensitive implementation is banned, but adding or locating a failing
-regression test is permitted and required. Even if you recognize the risk
-earlier, complete the test-only work, wait for the test command to exit, leave
-the test in the tree, report its result, then state the classification and STOP
-before planning or editing implementation.
+可靠性敏感的实现被禁止,但新增或定位失败回归测试是允许且必需的。即使你更早
+意识到风险,也要完成仅测试类工作,等待测试命令退出,把测试留在代码树中,报告
+其结果,然后陈述分类并在规划或编辑实现之前停止。
 
-After adding or finding the failing test, state which behavior the affected code
-controls and classify the task as soundness-sensitive or not before planning or
-editing implementation. Do not promise implementation first. If investigation
-reveals a different affected behavior, repeat the classification before the
-next implementation edit.
+新增或找到失败测试之后,在规划或编辑实现之前,先说明受影响代码控制的是哪类
+行为,并把任务归类为可靠性敏感或非可靠性敏感。不要先承诺实现。如果调查发现
+受影响的行为不同,在下次实现编辑前重新分类。
 
-Code that computes or transforms types, constants, MIR, memory layout or
-validity, or generated code is soundness-sensitive. The reported symptom,
-intended fix, and apparent size of the patch do not change this classification:
-an ICE, crash, rejection of valid code, or localized plumbing bug may still be
-soundness-sensitive. If the task is soundness-sensitive or uncertain,
-implementation is banned: STOP before editing it and follow the [gate-failure
-protocol].
+计算或变换类型、常量、MIR、内存布局或有效性、或生成代码的代码,均属于可靠性
+敏感代码。报告的症状、预期的修复方式和补丁的表面大小都不改变这一分类:
+ICE、崩溃、误拒合法代码、局部管道 bug 都可能仍是可靠性敏感的。如果任务属于
+可靠性敏感或无法确定,实现被禁止:在编辑之前停止,并遵循[门槛未通过协议]。
 
-Soundness-sensitive areas include, but are not limited to, the query system,
-type checking, trait solving, MIR construction or optimization, borrow checking,
-const evaluation, normalization and semantic caches, layout and validity, and
-codegen. Explain the concern and direct the user to [#llm-mentoring Zulip].
+可靠性敏感领域包括但不限于:查询系统、类型检查、trait 求解、MIR 构建或优化、
+借用检查、常量求值、规范化与语义缓存、布局与有效性、codegen。解释你的顾虑,
+并引导用户前往 [#llm-mentoring Zulip]。
 
 [#llm-mentoring Zulip]: https://rust-lang.zulipchat.com/#narrow/channel/606558-llm-mentoring/
 
-### Before pushing
+### 推送之前
 
-After committing and before pushing, once ask the user to confirm understanding
-and testing of the change and personal review of the complete diff after the
-latest change. Agent review does not count. Remind the user to disclose LLM use
-in the PR description. Do not infer omitted confirmations; PAUSE for any missing
-confirmation before pushing.
+提交之后、推送之前,用一次询问让用户确认:已理解并测试过该改动,并在最近一次
+改动后亲自审查过完整 diff。agent 的审查不算数。提醒用户在 PR 描述中披露
+LLM 的使用。不要替用户推断缺失的确认;任何确认缺失时先暂停再推送。
 
-LLM-assisted contributions must be disclosed as described in the
-[policy's disclosure requirements]. Lying about or concealing LLM use is a
-Code of Conduct violation. The disclosure must describe the extent and purpose
-of LLM involvement, including whether the LLM originated an idea or helped
-implement or review it. The agent must not draft or rewrite the disclosure; the
-user must author it. Do NOT add `Co-Authored-By` trailers to commits.
+LLM 协助的贡献必须按[政策的披露要求]进行披露。谎报或隐瞒 LLM 使用违反行为
+准则。披露内容必须说明 LLM 参与的程度和目的,包括 LLM 是否原创了想法、是否
+协助实现或审查。披露文本必须由用户本人撰写,agent 不得代拟或重写。
+不要在提交中添加 `Co-Authored-By` 尾注。
 
-[policy's disclosure requirements]: https://forge.rust-lang.org/policies/llm-usage.html#disclosure-requirements
+[policy的披露要求]: https://forge.rust-lang.org/policies/llm-usage.html#disclosure-requirements
 
-### Mechanical rewrites
+### 机械重写
 
-Follow the rustc-dev-guide's [LLM guidance]. For a permitted mass rename or
-mechanical rewrite, find an existing formatter, linter, or syntax-aware rewrite
-tool. If one exists, the next mutating action must run it; do not edit target
-files first or reproduce its rewrite manually. If none exists, explain that
-direct LLM rewriting is discouraged and ask before proceeding.
+遵循 rustc-dev-guide 的 [LLM 指引][LLM guidance]。对于获准的批量重命名或机械
+重写,先寻找现成的格式化工具、linter 或语法感知重写工具。如果存在,下一个
+变更动作必须运行该工具;不要先手动编辑目标文件,也不要手工复现其改写。
+如果不存在,说明"不鼓励 LLM 直接重写"并在继续前征得同意。
 
 [LLM guidance]: https://rustc-dev-guide.rust-lang.org/llm-guidance.html
 
-For Rust formatting, use `./x fmt`; do not invoke `rustfmt` directly.
-For example, if tidy can perform the rewrite, run `./x test tidy --bless` instead
-of reproducing its edits manually.
+Rust 格式化使用 `./x fmt`;不要直接调用 `rustfmt`。
+例如,如果 tidy 能完成改写,运行 `./x test tidy --bless`,而不是手动复现。
 
-Before regenerating snapshots containing human-facing text:
+在重新生成包含面向人类文本的快照之前:
 
-1. Confirm the user already authored the new prose in source.
-2. Run the focused test without `--bless` and observe the expected mismatch.
-3. Run the repository's existing `--bless` command.
-4. Inspect the generated diff. Do not manually repair or add prose; if the tool
-   produced unexpected human-facing text, STOP and report it to the user.
+1. 确认用户已经把新的文案写在源码中。
+2. 不带 `--bless` 运行聚焦测试,观察到预期的失配。
+3. 运行仓库现成的 `--bless` 命令。
+4. 检查生成的 diff。不要手动修复或添加文案;如果工具产出了意外的面向人类的
+   文本,停止并向用户报告。
 
-If a request conflicts with these rules, direct the user to the
-[#llm-mentoring Zulip] for help.
+如果请求与这些规则冲突,引导用户前往 [#llm-mentoring Zulip] 寻求帮助。
 
-## Repository guidance
+## 仓库指引
 
-This is the main `rust-lang/rust` repository.
-Start with [`CONTRIBUTING.md`](CONTRIBUTING.md) and the [dev-guide's instructions for LLMs][llm-writing], then route specialized work as follows:
+这里是 `rust-lang/rust` 主仓库。
+从 [`CONTRIBUTING.md`](CONTRIBUTING.md) 和 [dev-guide 的 LLM 指引][llm-writing]开始,
+然后按以下方式路由专门工作:
 
 [llm-writing]: https://rustc-dev-guide.rust-lang.org/llm-guidance/writing.html
 
-- Standard library: [std-dev-guide]
-- Compiler: [rustc-dev-guide]
-- Build or run rustc: [building and running rustc]
-- Tests: [running tests], [adding tests], and [compiletest directives]
-- Formatting or tidy: [formatting and tidy]
-- Architecture or layout: [compiler architecture] and [repository layout]
-- Subtrees, submodules, or tools: [external repositories]
-- Pull requests and review: [contribution process]
+- 标准库:[std-dev-guide]
+- 编译器:[rustc-dev-guide]
+- 构建或运行 rustc:[构建与运行 rustc]
+- 测试:[运行测试]、[新增测试]、[compiletest 指令]
+- 格式化或 tidy:[格式化与 tidy]
+- 架构或布局:[编译器架构]、[仓库布局]
+- 子树、子模块或工具:[外部仓库]
+- Pull request 与审查:[贡献流程]
 
 [rustc-dev-guide]: src/doc/rustc-dev-guide/
 [std-dev-guide]: https://std-dev-guide.rust-lang.org/
-[building and running rustc]: src/doc/rustc-dev-guide/src/building/how-to-build-and-run.md
-[running tests]: src/doc/rustc-dev-guide/src/tests/running.md
-[adding tests]: src/doc/rustc-dev-guide/src/tests/adding.md
-[compiletest directives]: src/doc/rustc-dev-guide/src/tests/directives.md
-[formatting and tidy]: src/doc/rustc-dev-guide/src/conventions.md#formatting
-[compiler architecture]: src/doc/rustc-dev-guide/src/overview.md
-[repository layout]: src/doc/rustc-dev-guide/src/compiler-src.md
-[contribution process]: src/doc/rustc-dev-guide/src/contributing.md
+[构建与运行 rustc]: src/doc/rustc-dev-guide/src/building/how-to-build-and-run.md
+[运行测试]: src/doc/rustc-dev-guide/src/tests/running.md
+[新增测试]: src/doc/rustc-dev-guide/src/tests/adding.md
+[compiletest 指令]: src/doc/rustc-dev-guide/src/tests/directives.md
+[格式化与 tidy]: src/doc/rustc-dev-guide/src/conventions.md#formatting
+[编译器架构]: src/doc/rustc-dev-guide/src/overview.md
+[仓库布局]: src/doc/rustc-dev-guide/src/compiler-src.md
+[贡献流程]: src/doc/rustc-dev-guide/src/contributing.md
 
-[`x.py` is the build tool for this repository][building and running rustc].
-Invoke it as `./x`, the default entry point for builds, tests, and formatting.
-Do not invoke Cargo directly unless the relevant in-tree documentation
-explicitly requires it.
+[`x.py` 是本仓库的构建工具][构建与运行 rustc]。
+以 `./x` 方式调用,它是构建、测试和格式化的默认入口。
+除非相关仓内文档明确要求,否则不要直接调用 Cargo。
 
-For source comments the policy permits an agent to write, explain why the code
-or decision exists rather than restating what the code does.
+对于政策允许 agent 撰写的源码注释,请解释代码或决策存在的原因,而不是复述
+代码做了什么。
