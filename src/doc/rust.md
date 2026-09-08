@@ -1,3 +1,5 @@
-% The Rust Reference Manual
+> 🌐 本文档由 [rust-lang/rust](https://github.com/rust-lang/rust) 翻译,英文原版见原项目。
 
-The manual has moved, and is now called [the reference](reference/index.html).
+% Rust 参考手册
+
+本手册已迁移,现在更名为[参考手册(the reference)](reference/index.html)。
